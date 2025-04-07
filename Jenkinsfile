@@ -2,7 +2,7 @@
 
 node("watermelon") {
   checkout scm
-  sh """
+  sh '''
     responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
     responseCode=$(echo $responseCode | perl -pe 'chomp')
     if [ "$responseCode" == "204" ]; then
@@ -10,5 +10,5 @@ node("watermelon") {
     else
       exit 1
     fi
-  """
+  '''
 }
