@@ -1,5 +1,22 @@
+pipeline {
 
-def runJob() {
+  agent {
+    node {
+      label 'watermelon'
+    }
+  }
+
+  stages { 
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Run') {
+      steps {
+        script {
           try {
           sh '''
             responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
@@ -20,28 +37,6 @@ def runJob() {
             message: """SCHEDULED JOB FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Check console output at ${env.BUILD_URL}"""
           )
         }
-}
-
-pipeline {
-
-  agent {
-    node {
-      label 'watermelon'
-    }
-  }
-
-  stages { 
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
-
-    stage('Run') {
-      steps {
-        script {
-          runJob
         }
       }
     }
