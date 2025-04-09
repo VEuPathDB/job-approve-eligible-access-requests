@@ -40,7 +40,9 @@ pipeline {
 
     stage('Run') {
       steps {
-        runJob
+        script {
+          runJob
+        }
       }
     }
   }
