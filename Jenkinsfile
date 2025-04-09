@@ -7,7 +7,6 @@ node('watermelon') {
   }
 
   stage('Run') {
-    steps {
       script {
         try {
           sh '''
@@ -30,7 +29,6 @@ node('watermelon') {
           )
           throw e
         }
-      }
     }
   }
 }
