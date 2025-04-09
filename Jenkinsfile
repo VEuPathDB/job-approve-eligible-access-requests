@@ -33,7 +33,7 @@ pipeline {
           slackSend(
             channel: "#alert-scheduled-jobs",
             color: 'danger',
-            message: """SCHEDULED JOB FAILED: Job '${steps.env.JOB_NAME} [${steps.env.BUILD_NUMBER}]' Check console output at ${steps.env.BUILD_URL}"""
+            message: """SCHEDULED JOB FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Check console output at ${env.BUILD_URL}"""
           )
         }
       }
