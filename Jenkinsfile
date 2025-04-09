@@ -20,8 +20,9 @@ pipeline {
       }
     }
   }
+}
 
-  def runJob() {
+def runJob() {
           try {
           sh '''
             responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
@@ -43,4 +44,4 @@ pipeline {
           )
         }
 }
-}
+
