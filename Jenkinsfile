@@ -16,7 +16,13 @@ pipeline {
 
     stage('Run') {
       steps {
-        try {
+        runJob
+      }
+    }
+  }
+
+  def runJob() {
+          try {
           sh '''
             responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
             responseCode=$(echo $responseCode | perl -pe 'chomp')
@@ -36,7 +42,5 @@ pipeline {
             message: """SCHEDULED JOB FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Check console output at ${env.BUILD_URL}"""
           )
         }
-      }
-    }
-  }
+}
 }
