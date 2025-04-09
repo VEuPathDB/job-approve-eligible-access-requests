@@ -6,13 +6,8 @@ pipeline {
     }
   }
 
-  steps.slackSend(
-    channel: "#alert-scheduled-jobs",
-    color: 'danger',
-    message: """SCHEDULED JOB FAILED: Job '${steps.env.JOB_NAME} [${steps.env.BUILD_NUMBER}]' Check console output at ${steps.env.BUILD_URL}"""
-  )
-
   stages { 
+
     stage('Checkout') {
       steps {
         checkout scm
@@ -33,6 +28,16 @@ pipeline {
           fi
         '''
       }
+    }
+  }
+
+  post {
+    failure {
+      slackSend(
+        channel: "#alert-scheduled-jobs",
+        color: 'danger',
+        message: """SCHEDULED JOB FAILED: Job '${steps.env.JOB_NAME} [${steps.env.BUILD_NUMBER}]' Check console output at ${steps.env.BUILD_URL}"""
+      )
     }
   }
 }
