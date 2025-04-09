@@ -1,23 +1,15 @@
-pipeline {
+node('watermelon') {
 
-  agent {
-    node {
-      label 'watermelon'
+  stage('Checkout') {
+    steps {
+      checkout scm
     }
   }
 
-  stages { 
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
-
-    stage('Run') {
-      steps {
-        script {
-          try {
+  stage('Run') {
+    steps {
+      script {
+        try {
           sh '''
             responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
             responseCode=$(echo $responseCode | perl -pe 'chomp')
@@ -29,19 +21,17 @@ pipeline {
               exit 1
             fi
           '''
-	}
-	catch(Exception e) {
+        }
+        catch(Exception e) {
           slackSend(
             channel: "#alert-scheduled-jobs",
             color: 'danger',
             message: """SCHEDULED JOB FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Check console output at ${env.BUILD_URL}"""
           )
-        }
+          throw e
         }
       }
     }
   }
 }
-
-
 
