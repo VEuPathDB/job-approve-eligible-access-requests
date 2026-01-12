@@ -11,7 +11,7 @@ node('cedar') {
     script {
       try {
         sh '''
-          responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `$ADMIN_TOKEN`")
+          responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: $ADMIN_TOKEN")
           responseCode=$(echo $responseCode | perl -pe 'chomp')
           if [ "$responseCode" == "204" ]; then
             echo "Eligible access request approval successful."
