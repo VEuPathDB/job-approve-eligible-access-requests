@@ -5,10 +5,13 @@ node('cedar') {
   }
 
   stage('Run') {
+    environment {
+        ADMIN_TOKEN = credentials('1546447f-7d6d-40fe-addb-873a9bb78f6e')
+    }
     script {
       try {
         sh '''
-          responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
+          responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `$ADMIN_TOKEN`")
           responseCode=$(echo $responseCode | perl -pe 'chomp')
           if [ "$responseCode" == "204" ]; then
             echo "Eligible access request approval successful."
