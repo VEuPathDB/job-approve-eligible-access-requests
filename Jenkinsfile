@@ -1,4 +1,4 @@
-node('watermelon') {
+node('cedar') {
 
   stage('Checkout') {
     checkout scm
