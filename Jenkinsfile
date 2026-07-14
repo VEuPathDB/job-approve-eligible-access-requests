@@ -1,14 +1,18 @@
-node('watermelon') {
-
-  stage('Checkout') {
-    checkout scm
+pipeline {
+  agent {
+    node {
+      label "pineapple"
+    }
   }
 
-  stage('Run') {
-    script {
-      try {
+  stages {
+    stage('Run') {
+      environment {
+        ADMIN_TOKEN = credentials('1546447f-7d6d-40fe-addb-873a9bb78f6e')
+      }
+      steps {
         sh '''
-          responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://qa.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: `cat ~/service-admin-token`")
+          responseCode=$(curl -s -o /dev/null -w "%{http_code}" --location --request POST "https://w1.clinepidb.org/eda/approve-eligible-access-requests" --header "admin-token: $ADMIN_TOKEN")
           responseCode=$(echo $responseCode | perl -pe 'chomp')
           if [ "$responseCode" == "204" ]; then
             echo "Eligible access request approval successful."
@@ -19,15 +23,17 @@ node('watermelon') {
           fi
         '''
       }
-      catch(Exception e) {
-        slackSend(
-          channel: "#alert-scheduled-jobs",
-          color: 'danger',
-          message: """SCHEDULED JOB FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Check console output at ${env.BUILD_URL}"""
-        )
-        throw e
-      }
+    }
+  } 
+  
+  post {
+    unsuccessful {
+     slackSend(
+        channel: "#alert-scheduled-jobs",
+        color: 'danger',
+        message: """SCHEDULED JOB FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Check console output at ${env.BUILD_URL}"""
+      ) 
     }
   }
-}
 
+}
